@@ -11,6 +11,7 @@ class Crawler
 
     function __construct()
     {
+        header("Content-Type: application/json; charset=utf-8;");
 //        $this->game_nm = 'tekkenvii';
         $this->game_nm = 'playerunknownsbattlegrounds';
 
@@ -31,7 +32,6 @@ class Crawler
         $html_arr = $this->ReadFile($target_path, '|');
 
         // tekken 페이지에서 모든 플랫폼 이름, 할인율, 현재가, 최저가, 발행가를 얻음
-//        $platform_nms = $this->Parse($html_arr,'/tekkenvii"]\'>(.*)<\/a>/U');
         $platform_nms = $this->Parse($html_arr,'/' . $this->game_nm . '"]\'>(.*)<\/a>/U');
         $discount_rates = $this->Parse($html_arr, '/priceTable__cut t-st3__num\'>(.*)<\/td>/U');
         $currents= $this->Parse($html_arr, '/priceTable__new t-st3__price \'>(.*)<\/td>/U');
@@ -39,14 +39,15 @@ class Crawler
         $regulars= $this->Parse($html_arr, '/priceTable__old t-st3__price\'>(.*)<\/td>/U');
 
         // 가장 첫 요소를 뽑아 최저가 행만 추출
-        $lowest_row[] = $platform_nms[0];
-        $lowest_row[] = $discount_rates[0];
-        $lowest_row[] = $currents[0];
-        $lowest_row[] = $lowests[0];
-        $lowest_row[] = $regulars[0];
+        $lowest_row["platform_nms"] = $platform_nms[0];
+        $lowest_row["discount_rates"] = $discount_rates[0];
+        $lowest_row["currents"] = $currents[0];
+        $lowest_row["lowests"] = $lowests[0];
+        $lowest_row["regulars"] = $regulars[0];
 
         // 초저가 행 출력
-        var_dump($lowest_row);
+        $lowest_row = json_encode($lowest_row);
+        print_r($lowest_row);
     }
 
     function CheckHTMLExists($html_path)
